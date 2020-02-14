@@ -29,7 +29,7 @@ If the new task start date is bigger than the end date, the entry is rejected.
 
 So now I have my app task in the Django project and the task model ready to be used.
 
-First thing now is to define an URL for my task app and modify the view, so that I can query the database, after having populated the DB with some tasks.  
+First thing now is to define a route in the URLS file for my task app and modify the view, so that I can query the database, after having populated the DB with some tasks.  
 In order to have a better look app, I used bootstrap with some CSS.
 To do so, I crated a base.html file in the templates directory.
 Having a base.html file is a good design, so I can have multiple page with the same style and format just inheriting from the base 
@@ -142,7 +142,7 @@ def get_ordered(topological_graph):
 
 For the bonus task I needed to present a GET function, that for a given task id, the client will be redirect to a page with the information only regarding that task (and the eventual sub-tasks)
 
-To do so, I needed to define a new URL, that takes in input an integer (that will be the task id).
+To do so, I needed to define a new route in the URLS file, that takes in input an integer (that will be the task id).
 At this point all what I needed to do was to implement a new function in the views to handle the request 
 
 ```python
