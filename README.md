@@ -190,3 +190,10 @@ Now you can interrogate the server using you browser on
 ```bash
 http://localhost:8000/
 ```
+
+
+## Testing
+
+```bash
+python manage.py test
+```
