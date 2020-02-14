@@ -1,0 +1,50 @@
+{% extends "task/base.html" %}
+{% block content %}
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th class="text-center">
+        ID<br />
+      </th>
+      <th class="text-center">
+        Name<br />
+      <th class="text-center">
+        Owner<br />
+      </th>
+      <th class="text-center">
+        Priority<br />
+      </th>
+      <th class="text-center">
+        Status<br />
+      </th>
+      <th class="text-center">
+        Start date<br />
+      </th>
+      <th class="text-center">
+        End date<br />
+      <th class="text-center">
+          Duration<br />
+      <th class="text-center">
+          Net Duration<br />
+	    <th class="text-center">
+	      Parent<br />
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  	{% for task in tasks %}
+    <th class="text-nowrap" scope="row">{{ task.id }}</th>
+      <td>{{ task.name }}</td>
+      <td>{{ task.author }}</td>
+      <td>{{ task.priority }}</td>
+      <td>{{ status|get_item:task.id }}</td>
+      <td>{{ task.start_date|date:"c" }}</td>
+      <td>{{ task.end_date|date:"c" }}</td>
+      <td>{{ duration|get_item:task.id }}</td>
+      <td>{{ net_duration|get_item:task.id }}</td>
+      <td>{{ task.parent.id }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content%}
