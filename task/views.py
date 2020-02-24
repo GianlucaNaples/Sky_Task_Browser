@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 import datetime
 from .models import Task
+from django.contrib.auth.models import User
 from django.template.defaulttags import register
-from django.http import Http404
+from django.views.generic import ListView, DetailView
 
 @register.filter
 def get_item(dictionary, key):
@@ -95,23 +96,49 @@ def get_ordered(topological_graph):
 		ordered.append(Task.objects.get(id=node))
 	return ordered
 
-
-def home(request):
-	context = {'tasks': Task.objects.all()}
-	graph = create_graph(context['tasks'])
+def fill_context(context):
+	graph = create_graph(context['object_list'])
 	context['status']=dfs(graph)
 	context['duration']=compute_duration(graph)
 	context['net_duration']=compute_net_time(graph)
-	context['tasks'] = get_ordered(context['status'])
-	return render(request, 'task/home.html',context)
+	context['object_list'] = get_ordered(context['status'])
 
-def detail(request,task_id):
-	try:
-		context = {'tasks': Task.objects.filter(id=task_id)|Task.objects.filter(parent=Task.objects.get(id=task_id))}
-		graph = create_graph(context['tasks'])
-		context['status']=dfs(graph)
-		context['duration']=compute_duration(graph)
-		context['net_duration']=compute_net_time(graph)
-	except Task.DoesNotExist:
-		raise Http404("The requested task does not exist")
-	return render(request, 'task/detail.html',context)
+
+class TaskListView(ListView):
+	model = Task
+	template_name = 'task/home.html' # <app>/<model>_<view_type>.html
+	context_object_name = 'tasks'
+	paginate_by = 5
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		fill_context(context)
+		return context
+
+class TaskDetailListView(DetailView):
+	model = Task
+	context_object_name = 'tasks'
+
+	def get_queryset(self):
+	 	return (Task.objects.filter(id=self.kwargs['pk'])|Task.objects.filter(parent=Task.objects.get(id=self.kwargs['pk'])))
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		fill_context(context)
+		return context
+
+class UserPostListView(ListView):
+	model = Task
+	template_name = 'task/home.html' # <app>/<model>_<view_type>.html
+
+	def get_queryset(self):
+		user = get_object_or_404(User, username=self.kwargs.get('username'))
+		return Task.objects.filter(author=user)
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['tasks'] = context.pop('object_list')
+		fill_context(context)
+		context['tasks'] = get_ordered(context['status'])
+		return context
+

@@ -35,7 +35,7 @@
   	{% for task in tasks %}
     <th class="text-nowrap" scope="row">{{ task.id }}</th>
       <td>{{ task.name }}</td>
-      <td>{{ task.author }}</td>
+      <td><a href="{% url 'user-tasks' task.author %}">{{ task.author }}</a></td>
       <td>{{ task.priority }}</td>
       <td>{{ status|get_item:task.id }}</td>
       <td>{{ task.start_date|date:"c" }}</td>

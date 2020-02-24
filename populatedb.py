@@ -2,7 +2,14 @@ from django.contrib.auth.models import User
 from task.models import Task
 import datetime
 from django.utils import timezone
-user = User.objects.all().first()
+user = User.objects.all().get(id=1)
+user2 = User.objects.all().get(id=2)
+user3 = User.objects.all().get(id=3)
+
+R = Task.objects.create(name='U', start_date=timezone.now()-datetime.timedelta(days=1), author=user3)
+
+U = Task.objects.create(name='P', start_date=timezone.now()-datetime.timedelta(days=1), author=user2)
+
 t1 = Task.objects.create(name='C', start_date=timezone.now()-datetime.timedelta(days=1), author=user)
 
 T = Task.objects.create(name='T', start_date=timezone.now(), end_date=timezone.now()+datetime.timedelta(minutes=180), author=user)
